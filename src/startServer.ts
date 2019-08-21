@@ -21,7 +21,7 @@ const RedisStore = connectRedis(session);
 
 export const startServer = async () => {
   if (process.env.NODE_ENV === "test") {
-    await redis.flushall();
+    await redis.flushall(); // release memory from old session
   }
 
   const server = new GraphQLServer({
