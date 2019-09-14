@@ -2,7 +2,7 @@ import { User } from "../../../entity/User";
 import { Connection } from "typeorm";
 import { TestClient } from "../../../utils/TestClient";
 import { createForgotPasswordLink } from "../../../utils/createForgotPasswordLink";
-import { redis } from "../../../redis";
+import { redis } from "../../../utils/redis";
 import { forgotPasswordLockAccount } from "../../../utils/forgotPasswordLockAccount";
 import { forgotPasswordLockedError } from "../login/errorMessage";
 import { passwordNotLongEnough } from "../register/errorMessage";

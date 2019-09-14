@@ -1,4 +1,4 @@
-import { createTestConn } from './testUtils/createTestConn';
+import { createTestConn } from "./testUtils/createTestConn";
 import { User } from "./entity/User";
 import "dotenv/config";
 import "reflect-metadata";
@@ -6,11 +6,11 @@ import { GraphQLServer } from "graphql-yoga";
 import * as session from "express-session";
 import * as connectRedis from "connect-redis";
 
-import { redis } from "./redis";
+import { redis } from "./utils/redis";
 import { createTypeormConn } from "./utils/createTypeormConn";
 import { confirmEmail } from "./routes/confirmEmail";
 import { genSchema } from "./utils/genSchema";
-import { redisSessionPrefix } from "./constant";
+import { redisSessionPrefix } from "./constants/prefix";
 import * as RateLimit from "express-rate-limit";
 import * as RateLimitRedisStore from "rate-limit-redis";
 import * as passport from "passport";
@@ -18,6 +18,7 @@ import { Strategy } from "passport-twitter";
 
 const SESSION_SECRET = "ajslkjalksjdfkl";
 const RedisStore = connectRedis(session);
+const port = process.env.NODE_ENV === "test" ? 0 : 4000;
 
 export const startServer = async () => {
   if (process.env.NODE_ENV === "test") {
@@ -72,7 +73,10 @@ export const startServer = async () => {
 
   server.express.get("/confirm/:id", confirmEmail);
 
-  const connection = process.env.NODE_ENV === "test" ? await createTestConn(true) : await createTypeormConn();
+  const connection =
+    process.env.NODE_ENV === "test"
+      ? await createTestConn(true)
+      : await createTypeormConn();
 
   passport.use(
     new Strategy(
@@ -88,7 +92,7 @@ export const startServer = async () => {
         const query = connection
           .getRepository(User)
           .createQueryBuilder("user")
-          .where('user.twitterId = :id', { id });
+          .where("user.twitterId = :id", { id });
 
         let email: string | null = null;
 
@@ -127,7 +131,7 @@ export const startServer = async () => {
     "/auth/twitter/callback",
     passport.authenticate("twitter", { session: false }),
     (req, res) => {
-      (req.session as any).userId = req.user.id
+      (req.session as any).userId = req.user.id;
       // @todo: Successful authentication, redirect to frontend.
       res.redirect("/");
     }
@@ -135,9 +139,9 @@ export const startServer = async () => {
 
   const app = await server.start({
     cors,
-    port: process.env.NODE_ENV === "test" ? 0 : 4000
+    port
   });
-  console.log("Server is running on localhost:4000");
+  console.log(`Server is running on http://localhost:${port}`);
 
   return app;
 };

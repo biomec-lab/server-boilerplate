@@ -4,7 +4,7 @@ import { createForgotPasswordLink } from "../../../utils/createForgotPasswordLin
 import { User } from "../../../entity/User";
 import { userNotFoundError, expiredKeyError } from "./errorMessage";
 import { passwordNotLongEnough } from "../register/errorMessage";
-import { forgotPasswordPrefix } from "../../../constant";
+import { forgotPasswordPrefix } from "../../../constants/prefix";
 import * as yup from "yup";
 import { formatYupError } from "../../../utils/formatYupError";
 import * as bcrypt from "bcryptjs";
